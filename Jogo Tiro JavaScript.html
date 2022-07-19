@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+    <script>
+        function iniciar(){
+            //alert("game iniciado");
+            let canvas = document.getElementById("gameMap");
+            let ctx = canvas.getContext("2d");
+                //ctx é o "contexto" do canvas, pra poder ser manipulado, criando no formato 2d;
+
+            let naveImg = document.getElementById("nave");
+            let inimigo1Img = document.getElementById("inimigo1")
+            let inimigo2Img = document.getElementById("inimigo2");
+            let tiroImg = document.getElementById("tiro");
+
+            ctx.drawImage(naveImg, 100, 150);
+            ctx.drawImage(inimigo1Img, 200, 150);
+        }
+
+    </script>
+    <body onload="iniciar(); /*onload executa JS ao carregar body*/"> 
+        <canvas id="gameMap" width="600" height="400" style="background-color: #ffffff; border: 1px solid #000000;"></canvas>
+        <img src="nave.png" id="nave">
+        <img src="inimigo-fase1.png" id="inimigo1">
+        <img src="inimigo-fase2.png" id="inimigo2">
+        <img src="tiro.png" id="tiro">
+    </body>
+</html>
