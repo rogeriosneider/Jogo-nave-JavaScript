@@ -1,13 +1,29 @@
 <!doctype html>
 <html>
     <script>
-        
+        class Nave{
+            constructor(ctx, imagem){
+                this.ctx = ctx;
+                this.imagem = imagem;
+                this.x = 0;
+                this.y = 350;
+            }
+
+            desenha(x, y){
+                this.ctx.clearRect(this.x, this.y, 35, 44); 
+                        //clearRect apaga a imagem na posição informada, no tamanho informado;
+                        //35 e 44 são as dimenções de img da nave;
+                this.x = x;
+                this.y = y;
+                this.ctx.drawImage(this.imagem, x, y);
+            }
+        }
+
+        let nave;
+
         function moveNave(event){
-            let canvas = document.getElementById("gameMap");
-            let ctx = canvas.getContext("2d");
-            let naveImg = document.getElementById("nave");
-            ctx.drawImage(naveImg, event.offsetX, event.offsetY);
-                //desenha a nave por onde o mouse passar dentro do canvas;
+            nave.desenha(event.offsetX, 350);
+                //desenha a nave por onde o mouse passar dentro do canvas, com limite vertical de 350px;
         }
 
         function iniciar(){
@@ -21,9 +37,11 @@
             let inimigo2Img = document.getElementById("inimigo2");
             let tiroImg = document.getElementById("tiro");
 
-            ctx.drawImage(naveImg, 100, 150);
+            /*ctx.drawImage(naveImg, 100, 150);
             ctx.drawImage(inimigo1Img, 200, 150);
-                //desenha no contexto a imagem escolhida, nos eixos x.horizontal e y.vertical respectivamente;
+                //desenha no contexto a imagem escolhida, nos eixos x.horizontal e y.vertical respectivamente;*/
+
+            nave = new Nave(ctx, naveImg);
         }
 
     </script>
