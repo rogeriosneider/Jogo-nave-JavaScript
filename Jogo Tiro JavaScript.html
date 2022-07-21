@@ -1,6 +1,15 @@
 <!doctype html>
 <html>
     <script>
+        
+        function moveNave(event){
+            let canvas = document.getElementById("gameMap");
+            let ctx = canvas.getContext("2d");
+            let naveImg = document.getElementById("nave");
+            ctx.drawImage(naveImg, event.offsetX, event.offsetY);
+                //desenha a nave por onde o mouse passar dentro do canvas;
+        }
+
         function iniciar(){
             //alert("game iniciado");
             let canvas = document.getElementById("gameMap");
@@ -14,11 +23,13 @@
 
             ctx.drawImage(naveImg, 100, 150);
             ctx.drawImage(inimigo1Img, 200, 150);
+                //desenha no contexto a imagem escolhida, nos eixos x.horizontal e y.vertical respectivamente;
         }
 
     </script>
     <body onload="iniciar(); /*onload executa JS ao carregar body*/"> 
-        <canvas id="gameMap" width="600" height="400" style="background-color: #ffffff; border: 1px solid #000000;"></canvas>
+        <canvas id="gameMap" width="600" height="400" style="background-color: #ffffff; border: 1px solid #000000;"
+        onmousemove="moveNave(event)"></canvas>
         <img src="nave.png" id="nave">
         <img src="inimigo-fase1.png" id="inimigo1">
         <img src="inimigo-fase2.png" id="inimigo2">
