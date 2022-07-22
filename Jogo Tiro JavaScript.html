@@ -7,25 +7,43 @@
                 this.imagem = imagem;
                 this.x = 0;
                 this.y = 350;
+                this.destinoX = 0;
             }
 
-            desenha(x, y){
+            apaga(){
                 this.ctx.clearRect(this.x, this.y, 35, 44); 
                         //clearRect apaga a imagem na posição informada, no tamanho informado;
                         //35 e 44 são as dimenções de img da nave;
-                this.x = x;
-                this.y = y;
-                this.ctx.drawImage(this.imagem, x, y);
+            }
+
+            desenha(){
+                this.ctx.drawImage(this.imagem, this.x, this.y);
+            }
+
+            move(){
+                if(this.destinoX == this.x) return;
+                this.apaga();
+                if(this.destinoX > this.x) this.x += 2;
+                else this.x -= 2;
+                this.desenha();
+            }
+
+            posicao(x){
+                this.destinoX = x + (x%2);
+                    //o +(x%2) é pra quando o x for impar transforma em par pra parar de tremer.
             }
         }
 
+        function posicao(event){
+            nave.posicao(event.offsetX);
+        }
+        
         let nave;
 
-        function moveNave(event){
-            nave.desenha(event.offsetX, 350);
-                //desenha a nave por onde o mouse passar dentro do canvas, com limite vertical de 350px;
+        function executaCiclo(){
+            nave.move();
         }
-
+        
         function iniciar(){
             //alert("game iniciado");
             let canvas = document.getElementById("gameMap");
@@ -42,12 +60,15 @@
                 //desenha no contexto a imagem escolhida, nos eixos x.horizontal e y.vertical respectivamente;*/
 
             nave = new Nave(ctx, naveImg);
+
+            intervalo = window.setInterval(executaCiclo,10);
+                //10 é o intervalo de tempo medido em milissegundos; 100=1/10 e 1000=1s;
         }
 
     </script>
     <body onload="iniciar(); /*onload executa JS ao carregar body*/"> 
         <canvas id="gameMap" width="600" height="400" style="background-color: #ffffff; border: 1px solid #000000;"
-        onmousemove="moveNave(event)"></canvas>
+        onmousemove="posicao(event)"></canvas>
         <img src="nave.png" id="nave">
         <img src="inimigo-fase1.png" id="inimigo1">
         <img src="inimigo-fase2.png" id="inimigo2">
