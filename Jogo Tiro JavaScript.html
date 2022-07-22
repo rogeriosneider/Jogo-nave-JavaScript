@@ -2,32 +2,22 @@
 <html>
     <script>
         class Sprite{
-            constructor(ctx, imagem){
+            constructor(ctx, imagem, x, y, largura, altura){
                 this.ctx = ctx;
                 this.imagem = imagem;
-                this.x = 0;
-                this.y = 350;
+                this.x = x;
+                this.y = y;
                 this.destinoX = 0;
+                this.largura = largura;
+                this.altura = altura;
             }
             apaga(){
-                this.ctx.clearRect(this.x, this.y, 35, 44); 
+                this.ctx.clearRect(this.x, this.y, this.largura, this.altura); 
                         //clearRect apaga a imagem na posição informada, no tamanho informado;
-                        //35 e 44 são as dimenções de img da nave;
+                        //largura e altura são as dimenções de img da nave;
             }
             desenha(){
                 this.ctx.drawImage(this.imagem, this.x, this.y);
-            }
-            move(){
-               
-            }
-            posicao(x){
-                
-            }
-        }
-
-        class Nave extends Sprite{
-            constructor(ctx, imagem){
-                super(ctx,imagem);
             }
             move(){
                 if(this.destinoX == this.x) return;
@@ -35,6 +25,27 @@
                 if(this.destinoX > this.x) this.x += 2;
                 else this.x -= 2;
                 this.desenha();
+            }
+        }
+
+        class Inimigo1 extends Sprite{
+            constructor(ctx, imagem){
+                super(ctx, imagem, 0, 0, 34, 60);
+            }
+            move(){
+                if(this.x >= 566){
+                    this.destinoX = 0;
+                }
+                if(this.x <= 0){
+                    this.destinoX = 566;
+                }
+                super.move();
+            }
+        }
+
+        class Nave extends Sprite{
+            constructor(ctx, imagem){
+                super(ctx, imagem, 0, 350, 35, 44);
             }
             posicao(x){
                 this.destinoX = x + (x%2);
@@ -47,9 +58,11 @@
         }
         
         let nave;
+        let inimigo1;
 
         function executaCiclo(){
             nave.move();
+            inimigo1.move();
         }
         
         function iniciar(){
@@ -68,6 +81,7 @@
                 //desenha no contexto a imagem escolhida, nos eixos x.horizontal e y.vertical respectivamente;*/
 
             nave = new Nave(ctx, naveImg);
+            inimigo1 = new Inimigo1(ctx, inimigo1Img);
 
             intervalo = window.setInterval(executaCiclo,10);
                 //10 é o intervalo de tempo medido em milissegundos; 100=1/10 e 1000=1s;
