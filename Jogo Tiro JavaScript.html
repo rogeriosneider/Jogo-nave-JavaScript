@@ -2,7 +2,7 @@
 <html>
     <script>
         class Sprite{
-            constructor(ctx, imagem, x, y, largura, altura){
+            constructor(ctx, imagem, x, y, largura, altura, velocidade){
                 this.ctx = ctx;
                 this.imagem = imagem;
                 this.x = x;
@@ -10,6 +10,7 @@
                 this.destinoX = 0;
                 this.largura = largura;
                 this.altura = altura;
+                this.velocidade = velocidade;
             }
             apaga(){
                 this.ctx.clearRect(this.x, this.y, this.largura, this.altura); 
@@ -22,15 +23,15 @@
             move(){
                 if(this.destinoX == this.x) return;
                 this.apaga();
-                if(this.destinoX > this.x) this.x += 2;
-                else this.x -= 2;
+                if(this.destinoX > this.x) this.x += this.velocidade;
+                else this.x -= this.velocidade;
                 this.desenha();
             }
         }
 
         class Inimigo1 extends Sprite{
-            constructor(ctx, imagem, x){
-                super(ctx, imagem, x, 0, 34, 60);
+            constructor(ctx, imagem, x, velocidade){
+                super(ctx, imagem, x, 0, 34, 60, velocidade);
             }
             move(){
                 if(this.x >= 566){
@@ -45,7 +46,7 @@
 
         class Nave extends Sprite{
             constructor(ctx, imagem){
-                super(ctx, imagem, 0, 350, 35, 44);
+                super(ctx, imagem, 0, 350, 35, 44, 2);
             }
             posicao(x){
                 this.destinoX = x + (x%2);
@@ -85,7 +86,8 @@
             nave = new Nave(ctx, naveImg);            
             for(let i=0; i<5; i++){
                 let x=i*70;
-                inimigos[i] = new Inimigo1(ctx, inimigo1Img, x);
+                    //x é o valor da posição inicial, crescente conforme o i para os inimigos spawnarem separados;
+                inimigos[i] = new Inimigo1(ctx, inimigo1Img, x, 1+(i%3));
             }
 
             intervalo = window.setInterval(executaCiclo,10);
