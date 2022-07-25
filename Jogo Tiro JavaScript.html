@@ -8,6 +8,7 @@
                 this.x = x;
                 this.y = y;
                 this.destinoX = 0;
+                this.destinoY = y;
                 this.largura = largura;
                 this.altura = altura;
                 this.velocidade = velocidade;
@@ -21,10 +22,16 @@
                 this.ctx.drawImage(this.imagem, this.x, this.y);
             }
             move(){
-                if(this.destinoX == this.x) return;
+                if((this.destinoX == this.x)&&(this.destinoY == this.y)) return;
                 this.apaga();
-                if(this.destinoX > this.x) this.x += this.velocidade;
-                else this.x -= this.velocidade;
+                if(this.destinoX != this.x){
+                    if(this.destinoX > this.x) this.x += this.velocidade;
+                    else this.x -= this.velocidade;
+                }
+                if(this.destinoY != this.y){
+                    if(this.destinoY > this.y) this.y += this.velocidade;
+                    else this.y -= this.velocidade;
+                }
                 this.desenha();
             }
         }
@@ -44,6 +51,19 @@
             }
         }
 
+        class Tiro extends Sprite{
+            constructor(ctx, x, y, orientacao){
+                let imagem = document.getElementById("tiro");
+                super(ctx, imagem, x, y, 17, 17, 2);
+                this.destinoX = x;
+                if(orientacao == 1){
+                    this.destinoY = 0;
+                } else {
+                    this.destinoY = 350;
+                }
+            }
+        }
+
         class Nave extends Sprite{
             constructor(ctx, imagem){
                 super(ctx, imagem, 0, 350, 35, 44, 2);
@@ -52,19 +72,25 @@
                 this.destinoX = x + (x%2);
                     //o +(x%2) é pra quando o x for impar transforma em par pra parar de tremer.
             }
+            tiro(){
+                return new Tiro(this.ctx, this.x+17, 350, 1)
+            }
         }
+
+        let nave;
+        let sprites = [];
 
         function posicao(event){
             nave.posicao(event.offsetX);
         }
-        
-        let nave;
-        let inimigos = [];
 
+        function tiro(){
+            sprites.push(nave.tiro());
+        }
+        
         function executaCiclo(){
-            nave.move();
-            for(let i=0; i<5; i++){
-                inimigos[i].move();
+            for(let i=0; i<sprites.length; i++){
+                sprites[i].move();
             }
         }
         
@@ -83,11 +109,12 @@
             ctx.drawImage(inimigo1Img, 200, 150);
                 //desenha no contexto a imagem escolhida, nos eixos x.horizontal e y.vertical respectivamente;*/
 
-            nave = new Nave(ctx, naveImg);            
-            for(let i=0; i<5; i++){
+            nave = new Nave(ctx, naveImg);  
+            sprites[0] = nave;          
+            for(let i=1; i<6; i++){
                 let x=i*70;
                     //x é o valor da posição inicial, crescente conforme o i para os inimigos spawnarem separados;
-                inimigos[i] = new Inimigo1(ctx, inimigo1Img, x, 1+(i%3));
+                sprites[i] = new Inimigo1(ctx, inimigo1Img, x, 1+(i%3));
             }
 
             intervalo = window.setInterval(executaCiclo,10);
@@ -97,7 +124,7 @@
     </script>
     <body onload="iniciar(); /*onload executa JS ao carregar body*/"> 
         <canvas id="gameMap" width="600" height="400" style="background-color: #ffffff; border: 1px solid #000000;"
-        onmousemove="posicao(event)"></canvas>
+        onmousemove="posicao(event)" onclick="tiro()"></canvas>
         <img src="nave.png" id="nave">
         <img src="inimigo-fase1.png" id="inimigo1">
         <img src="inimigo-fase2.png" id="inimigo2">
