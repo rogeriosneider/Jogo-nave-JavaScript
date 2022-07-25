@@ -29,8 +29,8 @@
         }
 
         class Inimigo1 extends Sprite{
-            constructor(ctx, imagem){
-                super(ctx, imagem, 0, 0, 34, 60);
+            constructor(ctx, imagem, x){
+                super(ctx, imagem, x, 0, 34, 60);
             }
             move(){
                 if(this.x >= 566){
@@ -58,11 +58,13 @@
         }
         
         let nave;
-        let inimigo1;
+        let inimigos = [];
 
         function executaCiclo(){
             nave.move();
-            inimigo1.move();
+            for(let i=0; i<5; i++){
+                inimigos[i].move();
+            }
         }
         
         function iniciar(){
@@ -80,8 +82,11 @@
             ctx.drawImage(inimigo1Img, 200, 150);
                 //desenha no contexto a imagem escolhida, nos eixos x.horizontal e y.vertical respectivamente;*/
 
-            nave = new Nave(ctx, naveImg);
-            inimigo1 = new Inimigo1(ctx, inimigo1Img);
+            nave = new Nave(ctx, naveImg);            
+            for(let i=0; i<5; i++){
+                let x=i*70;
+                inimigos[i] = new Inimigo1(ctx, inimigo1Img, x);
+            }
 
             intervalo = window.setInterval(executaCiclo,10);
                 //10 é o intervalo de tempo medido em milissegundos; 100=1/10 e 1000=1s;
