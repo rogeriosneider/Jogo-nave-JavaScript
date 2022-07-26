@@ -1,6 +1,10 @@
 <!doctype html>
 <html>
     <script>
+        const INIMIGO = 1;
+        const JOGADOR = 2;
+        const TIRO_JOGADOR = 3;
+
         class Sprite{
             constructor(ctx, imagem, x, y, largura, altura, velocidade){
                 this.ctx = ctx;
@@ -36,11 +40,15 @@
                 }
                 return true;
             }
+            testaColisao(x, y){
+                return (x >= this.x && x <= this.x + this.largura && y >= this.y && y <= this.y + this.altura);
+            }
         }
 
         class Inimigo1 extends Sprite{
             constructor(ctx, imagem, x, velocidade){
                 super(ctx, imagem, x, 0, 34, 60, velocidade);
+                this.tipoSprite = INIMIGO;
             }
             move(){
                 if(this.x >= 566){
@@ -63,6 +71,7 @@
                 } else {
                     this.destinoY = 350;
                 }
+                this.tipoSprite = TIRO_JOGADOR;
             }
             move(){
                 super.move();
@@ -76,6 +85,7 @@
         class Nave extends Sprite{
             constructor(ctx, imagem){
                 super(ctx, imagem, 0, 350, 35, 44, 2);
+                this.tipoSprite = JOGADOR;
             }
             posicao(x){
                 this.destinoX = x + (x%2);
@@ -101,6 +111,17 @@
             for(let i=0; i<sprites.length; i++){
                 if(!sprites[i].move()){
                     sprites.splice(i,1);
+                }
+            }
+            for(let i=0; i<sprites.length; i++){
+                if(sprites[i].tipoSprite == TIRO_JOGADOR){
+                    for(let j=0; j<sprites.length; j++){
+                        if(sprites[j].tipoSprite == INIMIGO){
+                            if(sprites[j].testaColisao(sprites[i].x, sprites[i].y)){
+                                sprites.splice(j, 1);
+                            }
+                        }
+                    }
                 }
             }
         }
