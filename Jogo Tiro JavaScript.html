@@ -22,17 +22,19 @@
                 this.ctx.drawImage(this.imagem, this.x, this.y);
             }
             move(){
-                if((this.destinoX == this.x)&&(this.destinoY == this.y)) return;
-                this.apaga();
-                if(this.destinoX != this.x){
-                    if(this.destinoX > this.x) this.x += this.velocidade;
-                    else this.x -= this.velocidade;
+                if((this.destinoX != this.x)||(this.destinoY != this.y)){
+                    this.apaga();
+                    if(this.destinoX != this.x){
+                        if(this.destinoX > this.x) this.x += this.velocidade;
+                        else this.x -= this.velocidade;
+                    }
+                    if(this.destinoY != this.y){
+                        if(this.destinoY > this.y) this.y += this.velocidade;
+                        else this.y -= this.velocidade;
+                    }
+                    this.desenha();
                 }
-                if(this.destinoY != this.y){
-                    if(this.destinoY > this.y) this.y += this.velocidade;
-                    else this.y -= this.velocidade;
-                }
-                this.desenha();
+                return true;
             }
         }
 
@@ -47,7 +49,7 @@
                 if(this.x <= 0){
                     this.destinoX = 566;
                 }
-                super.move();
+                return super.move();
             }
         }
 
@@ -61,6 +63,13 @@
                 } else {
                     this.destinoY = 350;
                 }
+            }
+            move(){
+                super.move();
+                if(this.destinoY == this.y) {
+                    this.apaga();
+                    return false;
+                } else return true;
             }
         }
 
@@ -90,7 +99,9 @@
         
         function executaCiclo(){
             for(let i=0; i<sprites.length; i++){
-                sprites[i].move();
+                if(!sprites[i].move()){
+                    sprites.splice(i,1);
+                }
             }
         }
         
