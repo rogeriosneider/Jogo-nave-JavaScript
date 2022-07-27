@@ -4,6 +4,7 @@
         const INIMIGO = 1;
         const JOGADOR = 2;
         const TIRO_JOGADOR = 3;
+        const TIRO_INIMIGO = 4;
 
         class Sprite{
             constructor(ctx, imagem, x, y, largura, altura, velocidade){
@@ -62,21 +63,25 @@
                 if(this.x <= 0){
                     this.destinoX = 566;
                 }
+                if(Math.floor(Math.random()*150)==0){
+                    let spriteTiro = new Tiro(this.ctx,this.x+16, 60, TIRO_INIMIGO);
+                    sprites.push(spriteTiro);
+                }
                 return super.move();
             }
         }
 
         class Tiro extends Sprite{
-            constructor(ctx, x, y, orientacao){
+            constructor(ctx, x, y, tipo){
                 let imagem = document.getElementById("tiro");
                 super(ctx, imagem, x, y, 17, 17, 2);
                 this.destinoX = x;
-                if(orientacao == 1){
+                if(tipo == TIRO_JOGADOR){
                     this.destinoY = 0;
                 } else {
                     this.destinoY = 350;
                 }
-                this.tipoSprite = TIRO_JOGADOR;
+                this.tipoSprite = tipo;
             }
             move(){
                 super.move();
@@ -106,7 +111,7 @@
                     //o +(x%2) é pra quando o x for impar transforma em par pra parar de tremer.
             }
             tiro(){
-                return new Tiro(this.ctx, this.x+10, 350, 1)
+                return new Tiro(this.ctx, this.x+10, 350, TIRO_JOGADOR)
             }
         }
 
@@ -114,7 +119,8 @@
         let sprites = [];
 
         function posicao(event){
-            nave.posicao(event.offsetX);
+            nave.posicao(event.offsetX-17);
+                //acrescentei o -17 para centralizar a nave com o ponteiro do mouse;
         }
 
         function tiro(){
