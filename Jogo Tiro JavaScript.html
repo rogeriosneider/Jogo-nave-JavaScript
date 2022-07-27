@@ -79,7 +79,7 @@
                 if(tipo == TIRO_JOGADOR){
                     this.destinoY = 0;
                 } else {
-                    this.destinoY = 350;
+                    this.destinoY = 380;
                 }
                 this.tipoSprite = tipo;
             }
@@ -91,11 +91,18 @@
                 }
             }
             testaColisao(){
-                for(let i=0; i<sprites.length; i++){
-                    if(sprites[i].tipoSprite == INIMIGO){
-                        if(sprites[i].testaColisao(this.x, this.y)){
-                            sprites[i].morre();
+                if(this.tipoSprite == TIRO_JOGADOR){
+                    for(let i=0; i<sprites.length; i++){
+                        if(sprites[i].tipoSprite == INIMIGO){
+                            if(sprites[i].testaColisao(this.x, this.y)){
+                                sprites[i].morre();
+                            }
                         }
+                    }
+                } else {
+                    if(nave.testaColisao(this.x, this.x)){
+                        console.log("fim do jogo!");
+                        nave.morre();
                     }
                 }
             }
@@ -117,6 +124,7 @@
 
         let nave;
         let sprites = [];
+        let intervalo;
 
         function posicao(event){
             nave.posicao(event.offsetX-17);
@@ -130,6 +138,9 @@
         function executaCiclo(){
             for(let i=0; i<sprites.length; i++){
                 sprites[i].move()
+            }
+            if(!nave.vivo){
+                clearInterval(intervalo);
             }
             for(let i=sprites.length-1; i>=0; i--){
                 if(!sprites[i].vivo){
