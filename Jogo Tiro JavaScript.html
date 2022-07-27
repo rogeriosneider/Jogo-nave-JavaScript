@@ -16,6 +16,7 @@
                 this.largura = largura;
                 this.altura = altura;
                 this.velocidade = velocidade;
+                this.vivo = true;
             }
             apaga(){
                 this.ctx.clearRect(this.x, this.y, this.largura, this.altura); 
@@ -42,6 +43,10 @@
             }
             testaColisao(x, y){
                 return (x >= this.x && x <= this.x + this.largura && y >= this.y && y <= this.y + this.altura);
+            }
+            morre(){
+                this.apaga();
+                this.vivo = false;
             }
         }
 
@@ -75,10 +80,19 @@
             }
             move(){
                 super.move();
+                this.testaColisao();
                 if(this.destinoY == this.y) {
-                    this.apaga();
-                    return false;
-                } else return true;
+                    this.morre();
+                }
+            }
+            testaColisao(){
+                for(let i=0; i<sprites.length; i++){
+                    if(sprites[i].tipoSprite == INIMIGO){
+                        if(sprites[i].testaColisao(this.x, this.y)){
+                            sprites[i].morre();
+                        }
+                    }
+                }
             }
         }
 
@@ -92,7 +106,7 @@
                     //o +(x%2) é pra quando o x for impar transforma em par pra parar de tremer.
             }
             tiro(){
-                return new Tiro(this.ctx, this.x+17, 350, 1)
+                return new Tiro(this.ctx, this.x+10, 350, 1)
             }
         }
 
@@ -109,19 +123,11 @@
         
         function executaCiclo(){
             for(let i=0; i<sprites.length; i++){
-                if(!sprites[i].move()){
-                    sprites.splice(i,1);
-                }
+                sprites[i].move()
             }
-            for(let i=0; i<sprites.length; i++){
-                if(sprites[i].tipoSprite == TIRO_JOGADOR){
-                    for(let j=0; j<sprites.length; j++){
-                        if(sprites[j].tipoSprite == INIMIGO){
-                            if(sprites[j].testaColisao(sprites[i].x, sprites[i].y)){
-                                sprites.splice(j, 1);
-                            }
-                        }
-                    }
+            for(let i=sprites.length-1; i>=0; i--){
+                if(!sprites[i].vivo){
+                    sprites.splice(i,1);
                 }
             }
         }
