@@ -125,6 +125,9 @@
         let nave;
         let sprites = [];
         let intervalo;
+        let fase = 0;
+        let inimigos = 0;
+        let ctx;
 
         function posicao(event){
             nave.posicao(event.offsetX-17);
@@ -139,11 +142,26 @@
             for(let i=0; i<sprites.length; i++){
                 sprites[i].move()
             }
+            if(inimigos == 0){
+                let inimigo1Img = document.getElementById("inimigo1");
+                for(let i=sprites.length-1; i>0; i--){
+                    sprites[i].morre();
+                    sprites.splice(i,1);
+                }
+                for(let i=0; i<5+(fase*2); i++){
+                    let x=i*70;
+                    let novoSprite = new Inimigo1(ctx, inimigo1Img, x, 1+(i%3));
+                    sprites.push(novoSprite);
+                    inimigos++;
+                }
+                alert("Iniciando fase " + ++fase);
+            }
             if(!nave.vivo){
                 clearInterval(intervalo);
             }
             for(let i=sprites.length-1; i>=0; i--){
                 if(!sprites[i].vivo){
+                    if(sprites[i].tipoSprite == INIMIGO) inimigos--;
                     sprites.splice(i,1);
                 }
             }
@@ -152,25 +170,20 @@
         function iniciar(){
             //alert("game iniciado");
             let canvas = document.getElementById("gameMap");
-            let ctx = canvas.getContext("2d");
+            ctx = canvas.getContext("2d");
                 //ctx é o "contexto" do canvas, pra poder ser manipulado, criando no formato 2d;
 
             let naveImg = document.getElementById("nave");
-            let inimigo1Img = document.getElementById("inimigo1")
+            /*let inimigo1Img = document.getElementById("inimigo1")
             let inimigo2Img = document.getElementById("inimigo2");
-            let tiroImg = document.getElementById("tiro");
+            let tiroImg = document.getElementById("tiro");*/
 
             /*ctx.drawImage(naveImg, 100, 150);
             ctx.drawImage(inimigo1Img, 200, 150);
                 //desenha no contexto a imagem escolhida, nos eixos x.horizontal e y.vertical respectivamente;*/
 
             nave = new Nave(ctx, naveImg);  
-            sprites[0] = nave;          
-            for(let i=1; i<6; i++){
-                let x=i*70;
-                    //x é o valor da posição inicial, crescente conforme o i para os inimigos spawnarem separados;
-                sprites[i] = new Inimigo1(ctx, inimigo1Img, x, 1+(i%3));
-            }
+            sprites[0] = nave;    
 
             intervalo = window.setInterval(executaCiclo,10);
                 //10 é o intervalo de tempo medido em milissegundos; 100=1/10 e 1000=1s;
