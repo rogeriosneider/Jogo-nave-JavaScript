@@ -7,9 +7,9 @@
         const TIRO_INIMIGO = 4;
 
         class Sprite{
-            constructor(ctx, imagem, x, y, largura, altura, velocidade){
+            constructor(ctx, idImagem, x, y, largura, altura, velocidade){
                 this.ctx = ctx;
-                this.imagem = imagem;
+                this.imagem = document.getElementById(idImagem);
                 this.x = x;
                 this.y = y;
                 this.destinoX = 0;
@@ -52,8 +52,8 @@
         }
 
         class Inimigo1 extends Sprite{
-            constructor(ctx, imagem, x, velocidade){
-                super(ctx, imagem, x, 0, 34, 60, velocidade);
+            constructor(ctx, x, velocidade){
+                super(ctx, "inimigo1", x, 0, 34, 60, velocidade);
                 this.tipoSprite = INIMIGO;
             }
             move(){
@@ -71,10 +71,37 @@
             }
         }
 
+        class Inimigo2 extends Sprite{
+            constructor(ctx, x, velocidade){
+                super(ctx, "inimigo2", x, 0, 55, 51, velocidade);
+                this.tipoSprite = INIMIGO;
+                this.destinoX = 545;
+                this.destinoY = 150;
+            }
+            move(){
+                if(this.x >= 545){
+                    this.destinoX = 0;
+                }
+                if(this.x <= 0){
+                    this.destinoX = 545;
+                }
+                if(this.y >= 150){
+                    this.destinoY = 0;
+                }
+                if(this.y <= 0){
+                    this.destinoY = 150;
+                }
+                if(Math.floor(Math.random()*150)==0){
+                    let spriteTiro = new Tiro(this.ctx,this.x+16, 60, TIRO_INIMIGO);
+                    sprites.push(spriteTiro);
+                }
+                return super.move();
+            }
+        }
+
         class Tiro extends Sprite{
             constructor(ctx, x, y, tipo){
-                let imagem = document.getElementById("tiro");
-                super(ctx, imagem, x, y, 17, 17, 2);
+                super(ctx, "tiro", x, y, 17, 17, 2);
                 this.destinoX = x;
                 if(tipo == TIRO_JOGADOR){
                     this.destinoY = 0;
@@ -143,18 +170,27 @@
                 sprites[i].move()
             }
             if(inimigos == 0){
-                let inimigo1Img = document.getElementById("inimigo1");
+                if(fase == 5){
+                    alert("Você venceu!");
+                    clearInterval(intervalo);
+                }
                 for(let i=sprites.length-1; i>0; i--){
                     sprites[i].morre();
-                    sprites.splice(i,1);
                 }
-                for(let i=0; i<5+(fase*2); i++){
+                let inimigosAvancados = fase;
+                for(let i=0; i<5; i++){
                     let x=i*70;
-                    let novoSprite = new Inimigo1(ctx, inimigo1Img, x, 1+(i%3));
+                    let novoSprite;
+                    if(inimigosAvancados > 0){
+                        novoSprite = new Inimigo2(ctx, x, 1+(i%3));
+                        inimigosAvancados--;
+                    } else {
+                        novoSprite = new Inimigo1(ctx, x, 1+(i%3));
+                    }
                     sprites.push(novoSprite);
                     inimigos++;
                 }
-                alert("Iniciando fase " + ++fase);
+                if(fase<5) alert("Iniciando fase " + ++fase);
             }
             if(!nave.vivo){
                 clearInterval(intervalo);
@@ -173,16 +209,7 @@
             ctx = canvas.getContext("2d");
                 //ctx é o "contexto" do canvas, pra poder ser manipulado, criando no formato 2d;
 
-            let naveImg = document.getElementById("nave");
-            /*let inimigo1Img = document.getElementById("inimigo1")
-            let inimigo2Img = document.getElementById("inimigo2");
-            let tiroImg = document.getElementById("tiro");*/
-
-            /*ctx.drawImage(naveImg, 100, 150);
-            ctx.drawImage(inimigo1Img, 200, 150);
-                //desenha no contexto a imagem escolhida, nos eixos x.horizontal e y.vertical respectivamente;*/
-
-            nave = new Nave(ctx, naveImg);  
+            nave = new Nave(ctx, "nave");  
             sprites[0] = nave;    
 
             intervalo = window.setInterval(executaCiclo,10);
