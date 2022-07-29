@@ -18,6 +18,7 @@
                 this.altura = altura;
                 this.velocidade = velocidade;
                 this.vivo = true;
+                this.desenha();
             }
             apaga(){
                 this.ctx.clearRect(this.x, this.y, this.largura, this.altura); 
@@ -57,11 +58,11 @@
                 this.tipoSprite = INIMIGO;
             }
             move(){
-                if(this.x >= 566){
+                if(this.x >= 766){
                     this.destinoX = 0;
                 }
                 if(this.x <= 0){
-                    this.destinoX = 566;
+                    this.destinoX = 766;
                 }
                 if(Math.floor(Math.random()*150)==0){
                     let spriteTiro = new Tiro(this.ctx,this.x+16, 60, TIRO_INIMIGO);
@@ -75,15 +76,15 @@
             constructor(ctx, x, velocidade){
                 super(ctx, "inimigo2", x, 0, 55, 51, velocidade);
                 this.tipoSprite = INIMIGO;
-                this.destinoX = 545;
+                this.destinoX = 745;
                 this.destinoY = 150;
             }
             move(){
-                if(this.x >= 545){
+                if(this.x >= 745){
                     this.destinoX = 0;
                 }
                 if(this.x <= 0){
-                    this.destinoX = 545;
+                    this.destinoX = 745;
                 }
                 if(this.y >= 150){
                     this.destinoY = 0;
@@ -92,7 +93,7 @@
                     this.destinoY = 150;
                 }
                 if(Math.floor(Math.random()*150)==0){
-                    let spriteTiro = new Tiro(this.ctx,this.x+16, 60, TIRO_INIMIGO);
+                    let spriteTiro = new Tiro(this.ctx,this.x+16, this.y+51, TIRO_INIMIGO);
                     sprites.push(spriteTiro);
                 }
                 return super.move();
@@ -113,8 +114,12 @@
             move(){
                 super.move();
                 this.testaColisao();
-                if(this.destinoY == this.y) {
+                if((this.destinoY == this.y)) {
                     this.morre();
+                } else if(this.tipoSprite == TIRO_INIMIGO){
+                    if((this.destinoY - this.y)<2) {
+                        this.morre();
+                    } 
                 }
             }
             testaColisao(){
@@ -128,7 +133,7 @@
                     }
                 } else {
                     if(nave.testaColisao(this.x, this.y)){
-                        alert("fim do jogo!");
+                        alert("Fim do jogo! Você encerrou na fase " + fase);
                         nave.morre();
                     }
                 }
@@ -137,7 +142,7 @@
 
         class Nave extends Sprite{
             constructor(ctx, imagem){
-                super(ctx, imagem, 0, 350, 35, 44, 2);
+                super(ctx, imagem, 400, 350, 35, 44, 2);
                 this.tipoSprite = JOGADOR;
             }
             posicao(x){
@@ -170,7 +175,7 @@
                 sprites[i].move()
             }
             if(inimigos == 0){
-                if(fase == 5){
+                if(fase == 8){
                     alert("Você venceu!");
                     clearInterval(intervalo);
                 }
@@ -178,7 +183,7 @@
                     sprites[i].morre();
                 }
                 let inimigosAvancados = fase;
-                for(let i=0; i<5; i++){
+                for(let i=0; i<5+fase; i++){
                     let x=i*70;
                     let novoSprite;
                     if(inimigosAvancados > 0){
@@ -190,7 +195,7 @@
                     sprites.push(novoSprite);
                     inimigos++;
                 }
-                if(fase<5) alert("Iniciando fase " + ++fase);
+                if(fase<8) alert("Iniciando fase " + ++fase);
             }
             if(!nave.vivo){
                 clearInterval(intervalo);
@@ -218,11 +223,13 @@
 
     </script>
     <body onload="iniciar(); /*onload executa JS ao carregar body*/"> 
-        <canvas id="gameMap" width="600" height="400" style="background-color: #ffffff; border: 1px solid #000000;"
+        <canvas id="gameMap" width="800" height="400" style="background-color: #ffffff; border: 1px solid #000000;"
         onmousemove="posicao(event)" onclick="tiro()"></canvas>
-        <img src="nave.png" id="nave">
-        <img src="inimigo-fase1.png" id="inimigo1">
-        <img src="inimigo-fase2.png" id="inimigo2">
-        <img src="tiro.png" id="tiro">
+        <div style="display: none;">
+            <img src="nave.png" id="nave">
+            <img src="inimigo-fase1.png" id="inimigo1">
+            <img src="inimigo-fase2.png" id="inimigo2">
+            <img src="tiro.png" id="tiro">
+        </div>
     </body>
 </html>
